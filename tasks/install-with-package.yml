@@ -1,10 +1,16 @@
 ---
-- name: Install Certbot.
+- name: Install Certbot via package.
   package: "name={{ certbot_package }} state=present"
   register: certbot_installed_ok
   delay: 5
   retries: 5
   until: certbot_installed_ok is success
+
+- name: Install Certbot DNS plugin via package.
+  package: "name=python3-certbot-dns-{{ certbot_dns_plugin }} state=present"
+  when:
+    - certbot_create_method == 'dns'
+    - certbot_dns_plugin is defined
 
 - name: Set Certbot script variable.
   set_fact:
