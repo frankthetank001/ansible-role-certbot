@@ -4,6 +4,11 @@
     path: /etc/letsencrypt/live/{{ cert_item.domains | first | replace('*.', '') }}/cert.pem
   register: letsencrypt_cert
 
+- name: Deploy DNS credentials file
+  template:
+    src: "{{ certbot_dns_plugin }}-dns.ini.j2"
+    dest: "/tmp/{{ certbot_dns_plugin }}_token.ini"
+
 - name: Generate new certificate if one doesn't exist.
   command: "{{ certbot_create_command }}"
   when: not letsencrypt_cert.stat.exists
